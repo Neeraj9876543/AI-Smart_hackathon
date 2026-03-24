@@ -11,9 +11,11 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
-    allowedHosts:[
-      'ai-smart-hackathon-frontend.onrender.com'
-    ]
+    allowedHosts: [
+      "scholar-graph.onrender.com",
+      "localhost",
+      "127.0.0.1"
+    ],
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
