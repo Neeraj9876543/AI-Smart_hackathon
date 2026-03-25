@@ -26,10 +26,19 @@ app.use(express.json());
 // Serve static files from uploads directory
 app.use('/uploads', express.static('uploads'));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/student-success-hub')
+// Connect to MongoDB with better error handling and timeout
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/student-success-hub', {
+  serverSelectionTimeoutMS: 5000, // 5 seconds timeout
+  socketTimeoutMS: 45000, // 45 seconds timeout
+  bufferMaxEntries: 0, // Disable mongoose buffering
+  bufferCommands: false, // Disable mongoose buffering
+})
 .then(() => console.log('MongoDB connected'))
-.catch(err => console.log('MongoDB connection error:', err));
+.catch(err => {
+  console.log('MongoDB connection error:', err);
+  console.log('Please check your MONGODB_URI environment variable');
+  process.exit(1); // Exit if cannot connect to database
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
