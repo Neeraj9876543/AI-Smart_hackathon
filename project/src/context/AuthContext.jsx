@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -104,7 +105,7 @@ export function AuthProvider({ children }) {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       // Verify token and get user info
-      axios.get('http://localhost:5000/api/auth/verify')
+      axios.get(API_ENDPOINTS.VERIFY)
         .then(response => {
           setUser(response.data.user);
         })
@@ -121,7 +122,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password, role) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post(API_ENDPOINTS.LOGIN, {
         email,
         password
       });
@@ -147,7 +148,7 @@ export function AuthProvider({ children }) {
 
   const register = async (userData) => {
     try {
-      await axios.post('http://localhost:5000/api/auth/register', userData);
+      await axios.post(API_ENDPOINTS.REGISTER, userData);
       
       // Do not auto-login the user upon registration so they can be redirected to the login page
       return { success: true };
@@ -161,7 +162,7 @@ export function AuthProvider({ children }) {
 
   const updateProfile = async (profileData) => {
     try {
-      const response = await axios.put('http://localhost:5000/api/auth/profile', profileData);
+      const response = await axios.put(API_ENDPOINTS.PROFILE, profileData);
       setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (error) {
