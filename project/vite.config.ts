@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
     allowedHosts: [
-      "scholar-graph.onrender.com",
+      "ai-smart-hackathon-4.onrender.com",
       "localhost",
       "127.0.0.1"
     ],
