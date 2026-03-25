@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
+    default: '',
   },
   isVerified: {
     type: Boolean,
@@ -57,10 +58,6 @@ const userSchema = new mongoose.Schema({
     specialization: String,
     phone: String,
     officeLocation: String,
-  },
-  profileImage: {
-    type: String,
-    default: ''
   },
   isActive: {
     type: Boolean,

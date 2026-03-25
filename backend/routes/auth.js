@@ -103,19 +103,61 @@ router.get('/google/callback',
 
 router.post('/register', async (req, res) => {
   try {
+    console.log('=== Registration Debug ===');
+    console.log('Request body:', req.body);
+    console.log('JWT_SECRET available:', !!process.env.JWT_SECRET);
+    
     const { name, email, password, role } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required' });
+    }
+    
+    // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
+    
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const user = new User({ name, email, password: hashedPassword, role: role || 'student' });
+    
+    // Create new user
+    const user = new User({ 
+      name, 
+      email, 
+      password: hashedPassword, 
+      role: role || 'student' 
+    });
+    
     await user.save();
-    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role }, 
+      process.env.JWT_SECRET || 'fallback-secret-key', 
+      { expiresIn: '24h' }
+    );
+    
+    console.log('User registered successfully:', user.email);
+    
+    res.status(201).json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role 
+      } 
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Registration error:', error);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 });
 
